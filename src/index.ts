@@ -10,7 +10,7 @@ export interface MongooseSentryLoggerInitOptions {
 export namespace MongooseSentryLogger {
   export const initSentry = ({ dsn, service }: Partial<MongooseSentryLoggerInitOptions>) => {
     Sentry.init({ dsn, tracesSampleRate: 1.0 });
-    Sentry.setTag('service', service);
+    Sentry.setTag('service', service || 'mongoose');
   };
 
   export const findAndCaptureModelErrors = (db: Mongoose) => {
@@ -36,8 +36,12 @@ export namespace MongooseSentryLogger {
 
     const { mongoose, dsn, service } = opts;
 
-    if (!mongoose || !dsn || !service) {
-      throw new Error(`Missing one or more required parameters`);
+    if (!mongoose || typeof mongoose !== 'function') {
+      throw new Error('Mongoose instance not supplied');
+    }
+
+    if (!dsn || typeof dsn !== 'string') {
+      throw new Error('Require a valid Sentry DSN for your project');
     }
 
     initSentry({ dsn, service });

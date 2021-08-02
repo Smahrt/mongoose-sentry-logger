@@ -2,6 +2,14 @@
 
 A simple sentry logging interceptor plugin for mongoose
 
+## Dependencies
+
+Ensure you have `mongoose` and `@sentry/node` packages installed on your project before your proceed. If you do not, please run the command below:
+
+```bash
+npm i mongoose @sentry/node --save
+```
+
 ## How to use
 
 1. Import `MongooseSentryLogger`:
