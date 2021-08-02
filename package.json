@@ -1,0 +1,43 @@
+{
+  "name": "mongoose-sentry-logger",
+  "version": "1.0.0",
+  "description": "A simple sentry logging interceptor plugin for mongoose",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "ts-mocha tests/**/*.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smahrt/mongoose-sentry-logger.git"
+  },
+  "keywords": [
+    "mongoose",
+    "sentry",
+    "logger",
+    "nodejs",
+    "node"
+  ],
+  "author": "Kubiat Morgan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Smahrt/mongoose-sentry-logger/issues"
+  },
+  "homepage": "https://github.com/Smahrt/mongoose-sentry-logger#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "sinon": "^11.1.2",
+    "ts-mocha": "^8.0.0",
+    "typescript": "^4.3.5"
+  }
+}
