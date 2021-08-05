@@ -1,6 +1,6 @@
 {
   "name": "mongoose-sentry-logger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple sentry logging interceptor plugin for mongoose",
   "main": "dist/index.js",
   "directories": {
