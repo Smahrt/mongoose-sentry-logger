@@ -1,5 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Mongoose, MongooseOptions } from 'mongoose';
+import { ConnectOptions, Mongoose, MongooseOptions } from 'mongoose';
 import { UtilHelper } from './util.helper';
 const mongoose: Mongoose = require('mongoose');
 
@@ -16,7 +16,7 @@ export namespace DbHelper {
   /**
    * Connect to the in-memory database.
    */
-  export const connect = async (db?: string) => {
+  export const connect = async (opts: ConnectOptions = {}) => {
     return new Promise<void>(async (resolve, reject) => {
       try {
         mongoose.connection.on('connected', () => {
@@ -27,12 +27,13 @@ export namespace DbHelper {
         const uri = (await getMongod()).getUri();
 
         const mongooseOpts: MongooseOptions = {
+          ...opts,
           useNewUrlParser: true,
           useUnifiedTopology: true,
           useCreateIndex: true
         };
 
-        await mongoose.connect(`${uri}${db || ''}`, mongooseOpts);
+        await mongoose.connect(uri, mongooseOpts);
       } catch (error) {
         reject(error);
       }

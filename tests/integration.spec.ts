@@ -7,20 +7,25 @@ const sinon = require('sinon');
 import * as Sentry from '@sentry/node';
 import { MongooseSentryLogger } from "../src";
 
-let captureExceptionSpy: SinonSpy;
+let captureExceptionSpy: SinonSpy, callCount = 1;
 
-const initPlugin = () => MongooseSentryLogger.init({ dsn: 'https://xxxxxxxxxxxxx@xxxxx.ingest.sentry.io/1234567', mongoose, service: 'test-service' });
+const initPlugin = () => MongooseSentryLogger.init({ dsn: 'https://xxxxxxxxxxxxx@xxxxx.ingest.sentry.io/1234567', mongoose, service: 'test-service', debug: true });
 
-const handleAssertError = (resolve) => {
-  expect(captureExceptionSpy.calledOnce).to.eq(true);
-  Sample.events.removeAllListeners();
+const handleAssertError = (resolve: () => void, err: any) => {
+  expect(captureExceptionSpy.callCount).to.eq(callCount++);
+
+  // remove test error listeners
+  Sample.events.listeners('error')
+    .filter(listener => listener.name === 'testErrHandler')
+    .forEach(listener => Sample.events.removeListener('error', listener as any));
+
   return resolve();
 }
 
 describe('mongoose-sentry-logger Integration Tests', () => {
   before(done => {
-    initPlugin();
-    DbHelper.connect().then(() => done());
+    const logger = initPlugin();
+    DbHelper.connect({ logger, loggerLevel: 'info' }).then(() => done());
     captureExceptionSpy = sinon.spy(Sentry, 'captureException');
   });
 
@@ -31,7 +36,7 @@ describe('mongoose-sentry-logger Integration Tests', () => {
 
   it('should catch mongoose model cast errors', async () => {
     await (new Promise<void>((resolve) => {
-      Sample.events.on('error', () => handleAssertError(resolve));
+      Sample.events.on('error', function testErrHandler(err) { return handleAssertError(resolve, err); });
 
       new Sample({ foo: 'stuff', bar: 'some-other-stuff' }).save()
         .then(() => { })
@@ -41,7 +46,7 @@ describe('mongoose-sentry-logger Integration Tests', () => {
 
   it('should catch mongoose duplicate key errors', async () => {
     await (new Promise<void>((resolve) => {
-      Sample.events.on('error', () => handleAssertError(resolve));
+      Sample.events.on('error', function testErrHandler(err) { return handleAssertError(resolve, err); });
 
       new Sample({ foo: 1, bar: 'there' }).save()
         .then(() => (new Sample({ foo: 1, bar: 'holla' }).save()))

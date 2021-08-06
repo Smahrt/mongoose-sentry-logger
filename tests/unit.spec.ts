@@ -4,16 +4,6 @@ import { MongooseSentryLogger } from '../src';
 const mongoose = require('mongoose');
 const sinon = require('sinon');
 
-/**
- * Clear all test data after every test.
- */
-// afterEach(async () => await DbHelper.clearDatabase());
-
-/**
- * Remove and close the db and server.
- */
-// after(async () => await DbHelper.closeDatabase());
-
 describe('mongoose-sentry-logger Unit Tests', () => {
   it('should throw error if mongoose is undefined', () => {
     expect(() => MongooseSentryLogger.init({ dsn: 'a-test-dsn', mongoose: undefined, service: 'test-service' }))
@@ -32,7 +22,7 @@ describe('mongoose-sentry-logger Unit Tests', () => {
 
   it('should succesfully initialize the plugin', () => {
     const stub: SinonStub = sinon.stub(MongooseSentryLogger, 'init');
-    stub.returns(mongoose);
+    stub.returns(() => {});
 
     expect(() => MongooseSentryLogger.init({ dsn: 'https://xxxxxxxxxxxxx@xxxxx.ingest.sentry.io/1234567', mongoose, service: 'test-service' }))
       .to.not.throw();
